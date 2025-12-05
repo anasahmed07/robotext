@@ -32,7 +32,13 @@ class GeminiService:
         return result['embedding']
     
     def embed_batch(self, texts: List[str]) -> List[List[float]]:
-        """Generate embeddings for multiple texts."""
+        """
+        Generate embeddings for multiple texts.
+        
+        Note: Currently processes sequentially. For better performance,
+        consider implementing concurrent processing with asyncio or
+        check if the Gemini API supports batch operations.
+        """
         embeddings = []
         for text in texts:
             embedding = self.embed_text(text)

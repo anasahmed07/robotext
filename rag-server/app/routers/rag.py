@@ -1,5 +1,6 @@
 """RAG API endpoints."""
 from fastapi import APIRouter, HTTPException, Depends
+from functools import lru_cache
 from ..models.schemas import (
     QueryRequest,
     QueryResponse,
@@ -11,8 +12,9 @@ from ..services.rag_service import RAGService
 router = APIRouter(prefix="/api/rag", tags=["rag"])
 
 
+@lru_cache()
 def get_rag_service() -> RAGService:
-    """Get RAG service instance."""
+    """Get cached RAG service instance (singleton)."""
     return RAGService()
 
 

@@ -94,5 +94,8 @@ class VectorStoreService:
         try:
             self.client.get_collections()
             return True
-        except Exception:
+        except Exception as e:
+            # Log the specific error for debugging
+            import logging
+            logging.warning(f"Failed to connect to Qdrant: {type(e).__name__}: {e}")
             return False

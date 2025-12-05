@@ -4,6 +4,14 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+// Validate required environment variables
+if (!process.env.BETTER_AUTH_SECRET) {
+  throw new Error(
+    "BETTER_AUTH_SECRET is required. Please set it in your .env file. " +
+    "It should be a random string of at least 32 characters."
+  );
+}
+
 export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "sqlite",
@@ -21,6 +29,6 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     },
   },
-  secret: process.env.BETTER_AUTH_SECRET || "your-secret-key-change-in-production",
+  secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3001",
 });
