@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  # Docusaurus static site
+  docs:
+    build:
+      context: ./docs
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./docs:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    command: npm start
+
+  # Express.js auth server with better-auth
+  auth-server:
+    build:
+      context: ./auth-server
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./auth-server:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=file:./auth.db
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-your-secret-key-change-in-production}
+      - BETTER_AUTH_URL=http://localhost:3001
+    depends_on:
+      - qdrant
+
+  # FastAPI RAG server
+  rag-server:
+    build:
+      context: ./rag-server
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./rag-server:/app
+    environment:
+      - QDRANT_HOST=qdrant
+      - QDRANT_PORT=6333
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - qdrant
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Qdrant vector database
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant_storage:/qdrant/storage
+
+volumes:
+  qdrant_storage:
