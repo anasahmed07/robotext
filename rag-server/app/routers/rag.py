@@ -1,5 +1,5 @@
 """RAG API endpoints."""
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from ..models.schemas import (
     QueryRequest,
     QueryResponse,
@@ -9,11 +9,15 @@ from ..models.schemas import (
 from ..services.rag_service import RAGService
 
 router = APIRouter(prefix="/api/rag", tags=["rag"])
-rag_service = RAGService()
+
+
+def get_rag_service() -> RAGService:
+    """Get RAG service instance."""
+    return RAGService()
 
 
 @router.post("/query", response_model=QueryResponse)
-async def query(request: QueryRequest):
+async def query(request: QueryRequest, rag_service: RAGService = Depends(get_rag_service)):
     """Perform a RAG query."""
     try:
         result = rag_service.query(request.query, request.top_k)
@@ -23,7 +27,7 @@ async def query(request: QueryRequest):
 
 
 @router.post("/documents", response_model=DocumentResponse)
-async def add_document(request: DocumentRequest):
+async def add_document(request: DocumentRequest, rag_service: RAGService = Depends(get_rag_service)):
     """Add a document to the vector store."""
     try:
         doc_id = rag_service.add_document(

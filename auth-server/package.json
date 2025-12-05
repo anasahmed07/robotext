@@ -6,6 +6,9 @@
     "dev": "nodemon --watch src --exec ts-node src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
+    "db:migrate": "prisma migrate dev",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,7 +16,7 @@
   "license": "ISC",
   "description": "Authentication server using better-auth",
   "dependencies": {
-    "@prisma/client": "^7.1.0",
+    "@prisma/client": "5.22.0",
     "better-auth": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -24,6 +27,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^24.10.1",
     "nodemon": "^3.1.11",
+    "prisma": "5.22.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }

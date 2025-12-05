@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { auth } from "./auth";
+import { toNodeHandler } from "better-auth/node";
 
 dotenv.config();
 
@@ -16,9 +17,7 @@ app.use(cors({
 app.use(express.json());
 
 // Better Auth routes
-app.all("/api/auth/*", (req, res) => {
-  return auth.handler(req, res);
-});
+app.all("/api/auth/*", toNodeHandler(auth));
 
 // Health check endpoint
 app.get("/health", (req: Request, res: Response) => {

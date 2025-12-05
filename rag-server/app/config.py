@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     collection_name: str = "robotext_docs"
     
     # Gemini API settings
-    gemini_api_key: str
+    gemini_api_key: str = ""
     gemini_embedding_model: str = "models/text-embedding-004"
     gemini_chat_model: str = "gemini-1.5-flash"
     
