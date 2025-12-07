@@ -1,36 +1,66 @@
 ---
-title: AI-Robot دماغ (NVIDIA Isaac)
-sidebar_label: NVIDIA Isaac
-description: NVIDIA Isaac Sim اور Isaac ROS کا استعمال کرتے ہوئے جدید ادراک (Perception) اور تربیت۔
-keywords: [NVIDIA Isaac, Isaac Sim, Isaac ROS, Perception, Reinforcement Learning]
+title: AI روبوٹ دماغ (NVIDIA Isaac)
+sidebar_label: NVIDIA Isaac پلیٹ فارم
+description: NVIDIA Isaac پلیٹ فارم میں مہارت حاصل کریں: فوٹو ریئلسٹک سمولیشن کے لیے Isaac Sim، GPU-accelerated ادراک کے لیے Isaac ROS، اور Isaac SDK۔
+keywords: [NVIDIA Isaac, Isaac Sim, Isaac ROS, Perception, Reinforcement Learning, VSLAM, cuMotion]
 ---
 
-# AI-Robot دماغ (NVIDIA Isaac)
+# AI روبوٹ دماغ (NVIDIA Isaac)
 
-**NVIDIA Isaac** ایک ایسا پلیٹ فارم ہے جو AI سے چلنے والے روبوٹس کی ترقی اور تعیناتی کو تیز کرنے کے لیے ڈیزائن کیا گیا ہے۔ یہ فوٹو ریئلسٹک رینڈرنگ اور GPU سے تیز رفتار ادراک (perception) لائبریریوں کا استعمال کرتے ہوئے سمولیشن اور حقیقت کے درمیان فرق کو ختم کرتا ہے۔
+## تعارف
 
-## Isaac Sim بمقابلہ Isaac ROS
+جبکہ گیزبو عمومی مقصد کے سمئولیشن میں بہترین ہے، **NVIDIA Isaac** کو خاص طور پر پیمانے پر AI سے چلنے والی روبوٹکس کے لیے بنایا گیا ہے۔ یہ تصویروں کی حقیقت پسندانہ رینڈرنگ (Ray Tracing) اور بڑے پیمانے پر متوازی فزکس سمولیشن فراہم کرنے کے لیے NVIDIA GPUs کی طاقت کا فائدہ اٹھاتا ہے۔
 
-یہ پلیٹ فارم دو اہم ستونوں پر مشتمل ہے:
+لیکن یہ صرف ایک سمیلیٹر نہیں ہے۔ **Isaac پلیٹ فارم** میں **Isaac ROS** شامل ہے—ہارڈویئر ایکسلریٹڈ پیکجز کا ایک سوٹ جو آپ کے روبوٹ کے NVIDIA Jetson کمپیوٹر پر چلتا ہے، جو اسے بنیادی طور پر "پہیوں پر ایک سپر کمپیوٹر" بنا دیتا ہے۔
 
-![Schematic showing Isaac Sim (Simulation/Training) on the left and Isaac ROS (Deployment/Inference) on the right. Style: NotebookLM dark mode schematic.](/img/docs/03/isaac-platform.png)
+## سیکھنے کے مقاصد
 
-1. **Isaac Sim**: NVIDIA Omniverse پر بنایا گیا ہے۔ یہ مصنوعی ڈیٹا (synthetic data) بنانے اور Reinforcement Learning (RL) ایجنٹس کی تربیت کے لیے استعمال ہوتا ہے۔
-2. **Isaac ROS**: ROS 2 کے لیے ہارڈ ویئر سے تیز رفتار پیکجز کا ایک مجموعہ۔ یہ روبوٹ (مثلاً Jetson Orin) پر کیمرے اور lidar ڈیٹا کو مؤثر طریقے سے پروسیس کرنے کے لیے چلتا ہے۔
+اس ماڈیول کے اختتام تک، آپ اس قابل ہو جائیں گے کہ:
+- **سمجھیں** Isaac ماحولیاتی نظام (Sim بمقابلہ ROS)۔
+- **تخلیق کریں** مصنوعی ڈیٹا (Synthetic Data) دستی لیبلنگ کے بغیر AI ماڈلز کو تربیت دینے کے لیے۔
+- **تعینات کریں** GPU-accelerated پرسیپشن پائپ لائنز (VSLAM، آبجیکٹ ڈیٹیکشن)۔
+- **استعمال کریں** **cuMotion** کے ساتھ جدید موشن پلاننگ۔
 
-## ادراک پائپ لائن (Perception Pipeline)
+## دی Isaac ماحولیاتی نظام
 
-Isaac ROS میں ایک عام ادراک پائپ لائن کچھ اس طرح دکھتی ہے:
+پلیٹ فارم دو اہم ستونوں پر مشتمل ہے:
 
-![Diagram of a pipeline: Camera Input -> Rectify -> VSLAM -> Occupancy Grid -> Path Planning. Style: NotebookLM dark mode schematic.](/img/docs/03/perception-pipeline.png)
+![مخاکہ جو Isaac Sim (سمولیشن/ٹریننگ) کو بائیں طرف اور Isaac ROS (تعیناتی/انفرنس) کو دائیں طرف دکھا رہا ہے۔ انداز: NotebookLM ڈارک موڈ مخاکہ۔](/img/docs/03/isaac-platform.png)
 
-- **Rectify**: لینس کی خرابی (distortion) کو درست کرتا ہے۔
-- **VSLAM**: بصری بیک وقت لوکلائزیشن اور میپنگ (Visual Simultaneous Localization and Mapping)۔ یہ طے کرتا ہے کہ روبوٹ کہاں ہے۔
-- **Nvblox**: ٹکراؤ سے بچنے کے لیے ماحول کا 3D نقشہ بناتا ہے۔
+1.  **Isaac Sim**: NVIDIA Omniverse پر بنایا گیا۔ استعمال کیا جاتا ہے:
+    -   **ڈیجیٹل ٹوئنز**: فوٹو ریئلسٹک دنیا۔
+    -   **مصنوعی ڈیٹا جنریشن**: AI ماڈلز کی تربیت۔
+    -   **Reinforcement Learning**: روبوٹس کو سم (sim) میں چلنے/پکڑنے کی تربیت دینا۔
+2.  **Isaac SDK / Isaac ROS**: ہارڈ ویئر ایکسلریٹڈ ROS 2 پیکجز۔ استعمال کیا جاتا ہے:
+    -   **ادراک (Perception)**: VSLAM، گہرائی کا اندازہ، آبجیکٹ کا پتہ لگانا۔
+    -   **نیویگیشن**: تیز رفتار راستے کی منصوبہ بندی۔
 
-## Isaac ROS VSLAM کی ترتیب (Configuration)
+## Isaac Sim اور مصنوعی ڈیٹا
 
-یہاں `isaac_ros_visual_slam` نوڈ کے لیے لانچ کنفیگریشن کی ایک مثال ہے۔
+کمپیوٹر وژن ماڈلز کی تربیت کے لیے ہزاروں لیبل شدہ تصاویر کی ضرورت ہوتی ہے۔ دستی لیبلنگ سست اور مہنگی ہے۔
+
+**مصنوعی ڈیٹا** اسے حل کرتا ہے۔ Isaac Sim فوری طور پر مکمل طور پر لیبل شدہ ڈیٹا (باؤنڈنگ باکسز، سیگمنٹیشن ماسک، ڈیپتھ) تیار کرتا ہے۔
+
+### ڈومین رینڈمائزیشن (Domain Randomization)
+AI کو سمولیشن کو "حفظ" کرنے سے روکنے کے لیے، ہم **ڈومین رینڈمائزیشن** کا استعمال کرتے ہیں:
+- روشنی کو بے ترتیب کریں (سورج کی پوزیشن، رنگ)۔
+- بناوٹ کو بے ترتیب کریں (دیواریں، فرش)۔
+- کیمرے کے شور کو بے ترتیب کریں۔
+
+یہ AI کو مضبوط خصوصیات سیکھنے پر مجبور کرتا ہے جو گندی حقیقی دنیا میں کام کرتی ہیں۔
+
+## Isaac ROS: پرسیپشن پائپ لائن
+
+**Isaac ROS** بھاری کام کو CPU سے GPU (CUDA + TensorRT) میں منتقل کرتا ہے۔
+
+![پائپ لائن کا خاکہ: کیمرہ ان پٹ -> Rectify -> VSLAM -> Occupancy Grid -> Path Planning۔ انداز: NotebookLM ڈارک موڈ مخاکہ۔](/img/docs/03/perception-pipeline.png)
+
+### اہم پیکجز
+-   **VSLAM (Visual SLAM)**: سٹیریو کیمروں کا استعمال کرتے ہوئے GPU-accelerated لوکلائزیشن۔
+-   **Nvblox**: تصادم سے بچنے کے لیے 3D نقشے بناتا ہے۔
+-   **TensorRT Inference**: ڈیپ لرننگ ماڈلز (YOLO, PeopleNet) کو CPU سے 10 گنا تیز چلاتا ہے۔
+
+### کوڈ کی مثال: Jetson کے لیے VSLAM ترتیب دینا
 
 ```python title="isaac_vslam_launch.py"
 from launch import LaunchDescription
@@ -44,31 +74,61 @@ def generate_launch_description():
         name='visual_slam_node',
         parameters=[{
             'enable_rectified_pose': True,
+            'enable_imu_fusion': True, # Fuse IMU for better accuracy
             'denoise_input_images': False,
-            'rectified_images': True,
-            'enable_debug_mode': False,
-            'debug_dump_path': '/tmp/vslam_dump',
         }],
         remappings=[
             ('stereo_camera/left/image_rect', '/camera/left/image_rect'),
             ('stereo_camera/right/image_rect', '/camera/right/image_rect'),
-            ('stereo_camera/left/camera_info', '/camera/left/camera_info'),
-            ('stereo_camera/right/camera_info', '/camera/right/camera_info'),
         ]
     )
-
-    container = ComposableNodeContainer(
-        name='vslam_container',
-        namespace='',
-        package='rclcpp_components',
-        executable='component_container_mt',
-        composable_node_descriptions=[vslam_node],
-        output='screen'
-    )
-
+    # ... container setup ...
     return LaunchDescription([container])
 ```
 
-:::info ہارڈ ویئر ایکسلریشن
-Isaac ROS نوڈز NVIDIA GPUs کے لیے بہت زیادہ آپٹمائزڈ ہیں۔ وہ اکثر **CUDA** اور **TensorRT** کا استعمال کرتے ہیں، جو انہیں معیاری CPU پر مبنی ROS نوڈز سے نمایاں طور پر تیز بناتا ہے۔
-:::
+## جدید خصوصیات (Advanced Features)
+
+### TensorRT آپٹیمائزیشن
+نیورل نیٹ ورکس اکثر PyTorch یا TensorFlow میں تربیت یافتہ ہوتے ہیں۔ **TensorRT** انہیں NVIDIA ہارڈویئر کے لیے بہتر بناتا ہے:
+-   تہوں (layers) کو ملا کر۔
+-   درستگی (precision) کو کیلیبریٹ کر کے (FP16 یا INT8)۔
+-   مخصوص GPUs کے لیے دانا (kernels) کو ٹیون کر کے۔
+
+### cuMotion: تیز موشن پلاننگ
+روایتی منصوبہ ساز (MoveIt/OMPL) CPU پر چلتے ہیں اور پیچیدہ بازوؤں کے لیے سست ہو سکتے ہیں۔ **cuMotion** GPU پر چلتا ہے، متوازی طور پر ہزاروں تصادم کے راستوں کی جانچ پڑتال کرتا ہے۔ یہ ملی سیکنڈ میں 7-DOF بازو کے لیے محفوظ رفتار کی منصوبہ بندی کر سکتا ہے۔
+
+```mermaid
+graph LR
+    User -->|Target Pose| MoveIt
+    MoveIt -->|Request| cuMotion
+    cuMotion -->|Parallel Compute| GPU
+    GPU -->|Traj| cuMotion
+    cuMotion -->|Solution| Robot
+```
+
+## خود تشخیصی سوالات (Self-Assessment)
+
+1.  **گیزبو پر Isaac Sim کیوں استعمال کریں؟**
+    <details>
+    <summary>جواب</summary>
+    Isaac Sim فوٹو ریئلسٹک رینڈرنگ (بصری تربیت کے لیے اہم) اور GPU ایکسلریٹڈ فزکس (100+ روبوٹس کی تقلید) پیش چلتا ہے۔ گیزبو عمومی، کم مخلصانہ تخروپن کے لیے بہتر ہے۔
+    </details>
+
+2.  **"Sim-to-Real" فرق کیا ہے؟**
+    <details>
+    <summary>جواب</summary>
+    سمولیشن اور حقیقت کے درمیان فرق۔ سمولیشن میں تربیت یافتہ ماڈلز حقیقی زندگی میں کامل طبیعیات/روشنی کی وجہ سے ناکام ہو جاتے ہیں۔ ہم اس فرق کو ختم کرنے کے لیے ڈومین رینڈمائزیشن کا استعمال کرتے ہیں۔
+    </details>
+
+3.  **روبوٹس کے لیے TensorRT کیوں اہم ہے؟**
+    <details>
+    <summary>جواب</summary>
+    روبوٹس میں محدود کمپیوٹ/بیٹری ہوتی ہے (جیسے جیٹسن نینو)۔ TensorRT تیز چلانے اور کم طاقت استعمال کرنے کے لیے AI ماڈلز کو بہتر بناتا ہے، جو ریئل ٹائم ادراک کو ممکن بناتا ہے۔
+    </details>
+
+## خلاصہ
+
+**AI روبوٹ دماغ** اعلی کارکردگی والے کمپیوٹ پر انحصار کرتا ہے:
+-   **Isaac Sim** ورچوئل دنیا میں دماغ کو تربیت دیتا ہے۔
+-   **Isaac ROS** GPU ایکسلریشن کا استعمال کرتے ہوئے فزیکل روبوٹ پر دماغ چلاتا ہے۔
+-   **مصنوعی ڈیٹا** سیکھنے کے لیے ایندھن (لیبل شدہ تصاویر) فراہم کرتا ہے۔

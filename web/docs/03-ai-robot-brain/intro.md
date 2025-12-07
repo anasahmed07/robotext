@@ -6,24 +6,32 @@ sidebar_position: 4
 
 ## Introduction
 
-Welcome to Module 3, where you'll delve into artificial intelligence and machine learning as the "brain" of modern robots.
+Welcome to **Module 3**, where things get smart. In this module, we move beyond basic control logic and enter the realm of **AI and Deep Learning**.
 
-## What You'll Learn
+We will use the **NVIDIA Isaac Platform** to give our robots the ability to see, understand, and navigate their world using powerful GPUs.
 
-In this module, you will:
-- Understand AI fundamentals in robotics context
-- Learn about neural networks and deep learning
-- Explore decision-making algorithms for robots
-- Implement basic AI models for robotic applications
+## Module Curriculum
+
+This module covers the "Brain" of the robot:
+
+1.  **Isaac Sim**: The training ground where robots learn skills in a safe, photorealistic metaverse.
+2.  **Isaac ROS**: The deployment stack that runs fast, hardware-accelerated AI on the physical robot.
+
+### Topics Covered
+
+- **[The AI-Robot Brain (NVIDIA Isaac Platform)](./01-nvidia-isaac.mdx)**
+    - **Simulation**: Using Omniverse for photorealism.
+    - **Synthetic Data**: Generating infinite labeled data for training.
+    - **Perception**: Visual SLAM, Object Detection, and Depth Estimation.
+    - **Optimization**: Using TensorRT and cuMotion for speed.
 
 ## Prerequisites
 
-- Completion of Modules 1 and 2
-- Python programming (intermediate level)
-- Basic mathematics (algebra and statistics)
+- **Module 1 & 2**: You should know ROS 2 and Gazebo concepts.
+- **Hardware**: An NVIDIA GPU (RTX series) is highly recommended for this module.
 
 ## Getting Started
 
-Discover how AI transforms robots from programmed machines into intelligent systems capable of learning and adaptation.
+Let's turn that metal shell into a thinking machine.
 
-[Continue to the first lesson →](#)
+[**Start: The AI-Robot Brain (NVIDIA Isaac) →**](./01-nvidia-isaac.mdx)
