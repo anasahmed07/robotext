@@ -56,7 +56,7 @@ const config: Config = {
 
   // Custom fields for runtime configuration
   customFields: {
-    API_URL: process.env.BACKEND_API_URL || 'http://localhost:4000',
+    API_URL: process.env.BACKEND_API_URL || 'https://robotext-auth.vercel.app',
   },
 
   // GitHub pages deployment config.
