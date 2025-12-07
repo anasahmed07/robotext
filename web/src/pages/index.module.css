@@ -67,7 +67,6 @@
   height: auto;
   display: block;
   border-radius: 16px;
-  cursor: pointer;
   outline: none;
 }
 
@@ -75,6 +74,70 @@
   outline: 2px solid var(--ifm-color-primary);
   outline-offset: 4px;
 }
+
+/* Video Controls */
+.videoControls {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  padding: 12px 20px;
+  border-radius: 50px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+}
+
+.heroVideoContainer:hover .videoControls,
+.heroVideoContainer:focus-within .videoControls {
+  opacity: 1;
+}
+
+/* Always show controls on mobile/touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .videoControls {
+    opacity: 1;
+  }
+}
+
+.controlButton {
+  background: transparent;
+  border: none;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.controlButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.1);
+}
+
+.controlButton:active {
+  transform: scale(0.95);
+}
+
+.controlButton:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+.controlButton svg {
+  width: 24px;
+  height: 24px;
+}
+
 
 .heroTitle {
   font-size: 4.5rem;
