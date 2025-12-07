@@ -1,0 +1,22 @@
+{
+  "version.label": {
+    "message": "موجودہ",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.1. Robotic Nervous System": {
+    "message": "1. روبوٹک اعصابی نظام",
+    "description": "Sidebar category label"
+  },
+  "sidebar.tutorialSidebar.category.2. Digital Twin": {
+    "message": "2. ڈیجیٹل ٹوئن",
+    "description": "Sidebar category label"
+  },
+  "sidebar.tutorialSidebar.category.3. AI Robot Brain": {
+    "message": "3. اے آئی روبوٹ دماغ",
+    "description": "Sidebar category label"
+  },
+  "sidebar.tutorialSidebar.category.4. VLA Models": {
+    "message": "4. VLA ماڈلز",
+    "description": "Sidebar category label"
+  }
+}

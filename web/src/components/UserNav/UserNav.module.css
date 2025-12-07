@@ -1,0 +1,156 @@
+.authButtons {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.authButton {
+  padding: 0.4rem 1rem;
+  border-radius: var(--ifm-button-border-radius);
+  font-weight: var(--ifm-font-weight-bold);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all var(--ifm-transition-fast) ease;
+  white-space: nowrap;
+}
+
+.loginButton {
+  color: var(--ifm-navbar-link-color);
+}
+
+.loginButton:hover {
+  color: var(--ifm-navbar-link-hover-color);
+  text-decoration: none;
+  background: var(--ifm-color-emphasis-100);
+}
+
+.signupButton {
+  color: var(--ifm-color-white);
+  background: var(--ifm-color-primary);
+  border: 1px solid var(--ifm-color-primary);
+}
+
+.signupButton:hover {
+  background: var(--ifm-color-primary-dark);
+  border-color: var(--ifm-color-primary-dark);
+  color: var(--ifm-color-white);
+  text-decoration: none;
+}
+
+.userMenu {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.userTrigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--ifm-global-radius);
+  color: var(--ifm-navbar-link-color);
+  transition: background-color var(--ifm-transition-fast);
+}
+
+.userTrigger:hover {
+  background-color: var(--ifm-color-emphasis-100);
+  color: var(--ifm-navbar-link-hover-color);
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--ifm-color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.userName {
+  font-weight: 500;
+  font-size: 0.9rem;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.chevron {
+  transition: transform 0.2s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  width: 220px;
+  background: var(--ifm-dropdown-background-color);
+  border-radius: var(--ifm-global-radius);
+  box-shadow: var(--ifm-dropdown-box-shadow);
+  padding: 0.5rem 0;
+  z-index: 100;
+  border: 1px solid var(--ifm-color-emphasis-200);
+}
+
+.dropdownHeader {
+  padding: 0.5rem 1rem;
+}
+
+.dropdownUserEmail {
+  font-size: 0.85rem;
+  color: var(--ifm-color-content-secondary);
+  word-break: break-all;
+}
+
+.dropdownDivider {
+  height: 1px;
+  background: var(--ifm-color-emphasis-200);
+  margin: 0.5rem 0;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 1rem;
+  border: none;
+  background: transparent;
+  color: var(--ifm-dropdown-link-color);
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.9rem;
+  transition: background-color var(--ifm-transition-fast);
+}
+
+.dropdownItem:hover {
+  background-color: var(--ifm-dropdown-hover-background-color);
+  color: var(--ifm-dropdown-link-hover-color);
+}
+
+.logoutIcon {
+  opacity: 0.7;
+}
+
+.loadingPlaceholder {
+  width: 100px;
+  height: 36px;
+}
+
+@media (max-width: 996px) {
+  .userName {
+    display: none;
+  }
+}

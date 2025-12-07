@@ -1,0 +1,62 @@
+.languageToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-button-border-radius);
+  color: var(--ifm-font-color-base);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.languageToggle:hover {
+  background: var(--ifm-color-emphasis-100);
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+.languageToggle:active {
+  transform: scale(0.98);
+}
+
+.languageIcon {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.languageText {
+  font-family: system-ui, -apple-system, sans-serif;
+  letter-spacing: 0.02em;
+}
+
+/* Dark mode adjustments */
+[data-theme='dark'] .languageToggle {
+  border-color: var(--ifm-color-emphasis-400);
+}
+
+[data-theme='dark'] .languageToggle:hover {
+  background: var(--ifm-color-emphasis-200);
+  border-color: var(--ifm-color-primary-light);
+  color: var(--ifm-color-primary-light);
+}
+
+/* RTL support */
+[dir='rtl'] .languageToggle {
+  flex-direction: row-reverse;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .languageToggle {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .languageIcon {
+    font-size: 1rem;
+  }
+}

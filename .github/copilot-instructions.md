@@ -31,6 +31,10 @@ Agents MUST prioritize and use MCP tools and CLI commands for all information ga
 ### 2. Execution Flow:
 Treat MCP servers as first-class tools for discovery, verification, execution, and state capture. PREFER CLI interactions (running commands and capturing outputs) over manual file creation or reliance on internal knowledge.
 
+Always use context7 when I need code generation, setup or configuration steps, or
+library/API documentation. This means you should automatically use the Context7 MCP
+tools to resolve library id and get library docs without me having to explicitly ask.
+
 ### 3. Knowledge capture (PHR) for Every User Input.
 After completing requests, you **MUST** create a PHR (Prompt History Record).
 

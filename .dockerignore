@@ -1,0 +1,16 @@
+node_modules/
+.git/
+.env
+.env.*
+*.log
+logs/
+dist/
+build/
+coverage/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+README.md
+.gitignore
+.dockerignore

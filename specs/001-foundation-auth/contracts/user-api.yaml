@@ -1,0 +1,309 @@
+openapi: 3.0.3
+info:
+  title: Robotext User Profile API
+  description: User profile management endpoints for Robotext educational platform
+  version: 1.0.0
+  contact:
+    name: Robotext Team
+    email: support@robotext.com
+
+servers:
+  - url: https://your-app.railway.app/api
+    description: Production (Railway)
+  - url: http://localhost:3000/api
+    description: Local development
+
+tags:
+  - name: User Profile
+    description: User profile and onboarding operations
+
+paths:
+  /user/me:
+    get:
+      tags:
+        - User Profile
+      summary: Get current user with profile
+      description: Retrieve authenticated user data including profile (knowledge base, hardware specs)
+      operationId: getUserMe
+      security:
+        - sessionToken: []
+      responses:
+        '200':
+          description: User data retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  profile:
+                    $ref: '#/components/schemas/UserProfile'
+                    nullable: true
+                    description: Null if user hasn't completed onboarding
+              examples:
+                withProfile:
+                  summary: User with completed profile
+                  value:
+                    user:
+                      id: usr_abc123xyz
+                      email: learner@example.com
+                      name: Ahmed Khan
+                      emailVerified: false
+                      image: null
+                      createdAt: "2025-12-06T10:00:00Z"
+                      updatedAt: "2025-12-06T10:00:00Z"
+                    profile:
+                      id: 550e8400-e29b-41d4-a716-446655440000
+                      userId: usr_abc123xyz
+                      programmingLanguages: ["Python", "C++", "JavaScript"]
+                      rosFamiliarity: Intermediate
+                      roboticsKnowledge: Beginner
+                      hardwareSpecs:
+                        gpu: "NVIDIA RTX 3060"
+                        ram: "16GB"
+                        cpu: "Intel i7-12700K"
+                        os: "Ubuntu 22.04"
+                      createdAt: "2025-12-06T10:05:00Z"
+                      updatedAt: "2025-12-06T10:05:00Z"
+                withoutProfile:
+                  summary: User without profile (needs onboarding)
+                  value:
+                    user:
+                      id: usr_new456
+                      email: newuser@example.com
+                      name: Sara Ali
+                      emailVerified: false
+                      image: null
+                      createdAt: "2025-12-06T11:00:00Z"
+                      updatedAt: "2025-12-06T11:00:00Z"
+                    profile: null
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /user/onboarding:
+    post:
+      tags:
+        - User Profile
+      summary: Complete user onboarding
+      description: Create or update user profile with knowledge base and hardware specifications
+      operationId: completeOnboarding
+      security:
+        - sessionToken: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OnboardingInput'
+      responses:
+        '200':
+          description: Profile created/updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profile:
+                    $ref: '#/components/schemas/UserProfile'
+                  message:
+                    type: string
+                    example: "Onboarding completed successfully"
+        '400':
+          description: Invalid input (validation errors)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Validation error"
+                code: "VALIDATION_ERROR"
+                details:
+                  programmingLanguages: "Must be an array of strings"
+                  rosFamiliarity: "Must be one of: Beginner, Intermediate, Advanced"
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: usr_abc123xyz
+        email:
+          type: string
+          format: email
+          example: learner@example.com
+        emailVerified:
+          type: boolean
+          example: false
+        name:
+          type: string
+          example: Ahmed Khan
+        image:
+          type: string
+          nullable: true
+          example: null
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-12-06T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-12-06T10:00:00Z"
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        userId:
+          type: string
+          example: usr_abc123xyz
+        programmingLanguages:
+          type: array
+          items:
+            type: string
+          example: ["Python", "C++", "JavaScript"]
+          description: Programming languages known by the user
+        rosFamiliarity:
+          type: string
+          enum:
+            - Beginner
+            - Intermediate
+            - Advanced
+          example: Intermediate
+          description: Familiarity with ROS (Robot Operating System)
+        roboticsKnowledge:
+          type: string
+          enum:
+            - Beginner
+            - Intermediate
+            - Advanced
+          example: Beginner
+          description: Overall robotics knowledge level
+        hardwareSpecs:
+          type: object
+          nullable: true
+          properties:
+            gpu:
+              type: string
+              example: "NVIDIA RTX 3060"
+              description: GPU model
+            ram:
+              type: string
+              example: "16GB"
+              description: RAM amount
+            cpu:
+              type: string
+              example: "Intel i7-12700K"
+              description: CPU model
+            os:
+              type: string
+              example: "Ubuntu 22.04"
+              description: Operating system
+          description: User's hardware specifications for tailored code examples
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-12-06T10:05:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-12-06T10:05:00Z"
+
+    OnboardingInput:
+      type: object
+      required:
+        - programmingLanguages
+        - rosFamiliarity
+        - roboticsKnowledge
+      properties:
+        programmingLanguages:
+          type: array
+          items:
+            type: string
+            minLength: 1
+            maxLength: 50
+          minItems: 1
+          maxItems: 20
+          example: ["Python", "C++", "JavaScript"]
+          description: List of programming languages the user knows
+        rosFamiliarity:
+          type: string
+          enum:
+            - Beginner
+            - Intermediate
+            - Advanced
+          example: Intermediate
+          description: How familiar the user is with ROS
+        roboticsKnowledge:
+          type: string
+          enum:
+            - Beginner
+            - Intermediate
+            - Advanced
+          example: Beginner
+          description: Overall robotics knowledge level
+        hardwareSpecs:
+          type: object
+          properties:
+            gpu:
+              type: string
+              minLength: 1
+              maxLength: 100
+              example: "NVIDIA RTX 3060"
+            ram:
+              type: string
+              minLength: 1
+              maxLength: 50
+              example: "16GB"
+            cpu:
+              type: string
+              minLength: 1
+              maxLength: 100
+              example: "Intel i7-12700K"
+            os:
+              type: string
+              minLength: 1
+              maxLength: 100
+              example: "Ubuntu 22.04"
+          description: User's hardware specifications (optional but recommended)
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: "Validation error"
+        code:
+          type: string
+          example: "VALIDATION_ERROR"
+        details:
+          type: object
+          additionalProperties: true
+
+  securitySchemes:
+    sessionToken:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: "Session token in format: Bearer <token>"
+
+security:
+  - sessionToken: []

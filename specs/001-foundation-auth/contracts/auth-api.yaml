@@ -1,0 +1,284 @@
+openapi: 3.0.3
+info:
+  title: Robotext Authentication API
+  description: Authentication endpoints for Robotext educational platform using better-auth
+  version: 1.0.0
+  contact:
+    name: Robotext Team
+    email: support@robotext.com
+
+servers:
+  - url: https://your-app.railway.app/api
+    description: Production (Railway)
+  - url: http://localhost:3000/api
+    description: Local development
+
+tags:
+  - name: Authentication
+    description: User authentication operations
+
+paths:
+  /auth/sign-up:
+    post:
+      tags:
+        - Authentication
+      summary: Register new user account
+      description: Create a new user account with email and password
+      operationId: signUp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: learner@example.com
+                  description: User email address (must be unique)
+                password:
+                  type: string
+                  format: password
+                  minLength: 8
+                  example: SecurePass123!
+                  description: Password (min 8 characters, mix of letters/numbers/symbols recommended)
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 100
+                  example: Ahmed Khan
+                  description: User display name
+      responses:
+        '201':
+          description: Account created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  session:
+                    $ref: '#/components/schemas/Session'
+        '400':
+          description: Invalid input (email format, password too weak, etc.)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Email already registered"
+                code: "EMAIL_EXISTS"
+
+  /auth/sign-in:
+    post:
+      tags:
+        - Authentication
+      summary: Sign in existing user
+      description: Authenticate user with email and password
+      operationId: signIn
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: learner@example.com
+                password:
+                  type: string
+                  format: password
+                  example: SecurePass123!
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  session:
+                    $ref: '#/components/schemas/Session'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                error: "Invalid email or password"
+                code: "INVALID_CREDENTIALS"
+        '429':
+          description: Too many login attempts (rate limited)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/sign-out:
+    post:
+      tags:
+        - Authentication
+      summary: Sign out current user
+      description: Terminate user session
+      operationId: signOut
+      security:
+        - sessionToken: []
+      responses:
+        '200':
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/get-session:
+    get:
+      tags:
+        - Authentication
+      summary: Get current session
+      description: Retrieve current user session and user data
+      operationId: getSession
+      security:
+        - sessionToken: []
+      responses:
+        '200':
+          description: Session data retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  session:
+                    $ref: '#/components/schemas/Session'
+        '401':
+          description: Not authenticated or session expired
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: null
+                  session:
+                    type: null
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: usr_abc123xyz
+          description: Unique user identifier
+        email:
+          type: string
+          format: email
+          example: learner@example.com
+        emailVerified:
+          type: boolean
+          example: false
+          description: Email verification status
+        name:
+          type: string
+          example: Ahmed Khan
+        image:
+          type: string
+          nullable: true
+          example: null
+          description: Profile image URL
+        createdAt:
+          type: string
+          format: date-time
+          example: "2025-12-06T10:00:00Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2025-12-06T10:00:00Z"
+
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+          example: sess_xyz789abc
+        userId:
+          type: string
+          example: usr_abc123xyz
+        token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+          description: Session token (JWT or opaque token)
+        expiresAt:
+          type: string
+          format: date-time
+          example: "2026-01-05T10:00:00Z"
+          description: Session expiration timestamp (30 days from creation)
+        ipAddress:
+          type: string
+          nullable: true
+          example: "192.168.1.100"
+        userAgent:
+          type: string
+          nullable: true
+          example: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)..."
+
+    Error:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          example: "Validation error"
+          description: Human-readable error message
+        code:
+          type: string
+          example: "VALIDATION_ERROR"
+          description: Machine-readable error code
+        details:
+          type: object
+          additionalProperties: true
+          description: Additional error context (e.g., field validation errors)
+
+  securitySchemes:
+    sessionToken:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: "Session token in format: Bearer <token>"
+
+security:
+  - sessionToken: []

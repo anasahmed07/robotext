@@ -1,0 +1,165 @@
+/**
+ * Custom CSS for Robotext Educational Platform
+ * Includes Tailwind directives, theme colors, and RTL support
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Theme Colors */
+:root {
+  --ifm-color-primary: #00e599;
+  --ifm-color-primary-dark: #00cf8a;
+  --ifm-color-primary-darker: #00c482;
+  --ifm-color-primary-darkest: #00a26b;
+  --ifm-color-primary-light: #00ffa8;
+  --ifm-color-primary-lighter: #1affb0;
+  --ifm-color-primary-lightest: #4dffc4;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-background-color: #ffffff;
+  --ifm-navbar-background-color: #ffffff;
+}
+
+/* Dark Mode */
+[data-theme='dark'] {
+  --ifm-color-primary: #00e599;
+  --ifm-color-primary-dark: #00cf8a;
+  --ifm-color-primary-darker: #00c482;
+  --ifm-color-primary-darkest: #00a26b;
+  --ifm-color-primary-light: #00ffa8;
+  --ifm-color-primary-lighter: #1affb0;
+  --ifm-color-primary-lightest: #4dffc4;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-background-color: #18191b;
+  --ifm-navbar-background-color: #18191b;
+}
+
+/* Navbar Styling */
+.navbar {
+  padding-left: 5rem;
+  padding-right: 5rem;
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+.navbar__logo {
+  height: 40px;
+  max-height: 40px;
+}
+
+/* RTL Support - Ensure code blocks remain LTR */
+[dir='rtl'] pre,
+[dir='rtl'] code {
+  direction: ltr;
+  text-align: left;
+}
+
+/* RTL Support - Proper text alignment */
+[dir='rtl'] {
+  text-align: right;
+}
+
+[dir='ltr'] {
+  text-align: left;
+}
+
+/* RTL-aware spacing using logical properties */
+.markdown > * {
+  margin-inline-start: 0;
+  margin-inline-end: 0;
+}
+
+/* RTL navbar and sidebar layout */
+[dir='rtl'] .navbar__items {
+  flex-direction: row-reverse;
+}
+
+[dir='rtl'] .navbar__item {
+  padding-inline-start: 0;
+  padding-inline-end: var(--ifm-navbar-item-padding-horizontal);
+}
+
+[dir='rtl'] .menu {
+  padding-inline-start: 0;
+  padding-inline-end: 0;
+}
+
+/* RTL content margins and padding */
+[dir='rtl'] .markdown h1,
+[dir='rtl'] .markdown h2,
+[dir='rtl'] .markdown h3,
+[dir='rtl'] .markdown h4,
+[dir='rtl'] .markdown h5,
+[dir='rtl'] .markdown h6 {
+  text-align: right;
+}
+
+[dir='rtl'] .markdown ul,
+[dir='rtl'] .markdown ol {
+  padding-inline-start: 0;
+  padding-inline-end: 2rem;
+}
+
+[dir='rtl'] .markdown blockquote {
+  border-inline-start: none;
+  border-inline-end: 4px solid var(--ifm-color-emphasis-300);
+  padding-inline-start: 0;
+  padding-inline-end: 1rem;
+}
+
+
+/* Custom button styles */
+.button--primary {
+  background-color: var(--ifm-color-primary);
+  border-color: var(--ifm-color-primary);
+  color: #18191b;
+  font-weight: 700;
+}
+
+.button--primary:hover {
+  background-color: var(--ifm-color-primary-light);
+  border-color: var(--ifm-color-primary-light);
+  color: #18191b;
+}
+
+/* Footer Styling */
+.footer {
+  background-color: #f8fafc;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+[data-theme='dark'] .footer {
+  background-color: #0f1112;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.footer__title {
+  color: #18191b;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+[data-theme='dark'] .footer__title {
+  color: #ffffff;
+}
+
+.footer__link-item {
+  color: var(--ifm-font-color-base);
+  opacity: 0.8;
+  transition: all 0.2s ease;
+}
+
+.footer__link-item:hover {
+  color: var(--ifm-color-primary);
+  opacity: 1;
+  text-decoration: none;
+}
+
+.footer__copyright {
+  color: var(--ifm-font-color-base);
+  opacity: 0.6;
+  margin-top: 2rem;
+}
+

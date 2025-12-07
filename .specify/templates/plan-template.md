@@ -31,20 +31,7 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- [ ] **Educational Excellence**: Content follows progressive complexity (fundamentals → advanced)?
-- [ ] **Curriculum Structure**: Content aligned with 4-module, 13-week course outline?
-- [ ] **Content Standards**: Chapters include learning objectives, code examples, visuals, self-checks?
-- [ ] **Bilingual Accessibility**: i18n support planned for English/Urdu with RTL?
-- [ ] **AI-Native Architecture**: RAG implementation strict (no hallucination)?
-- [ ] **Separation of Concerns**: Service boundaries clear (Frontend/Auth API/Chat API)?
-- [ ] **Access Control**: Two-tier access model defined (open vs. auth-gated)?
-- [ ] **Content as Code**: MDX format adopted for educational content?
-- [ ] **Mobile-First**: Responsive design with mobile-first approach?
-- [ ] **Observability**: Logging, monitoring, analytics, privacy compliance planned?
-- [ ] **Technology Stack**: Using mandated technologies (Docusaurus, Node.js, FastAPI, etc.)?
-- [ ] **Code Quality**: Linting, type safety, testing frameworks specified?
-- [ ] **Performance**: Latency budgets defined (<200ms Auth, <3s Chat)?
-- [ ] **Security**: HTTPS, secrets management, input validation, rate limiting planned?
+[Gates determined based on constitution file]
 
 ## Project Structure
 
