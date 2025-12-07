@@ -1,4 +1,5 @@
 import type {ReactNode} from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
@@ -22,6 +23,76 @@ function HeroAnimation() {
         </div>
         <div className={styles.robotArm}></div>
       </div>
+    </div>
+  );
+}
+
+function HeroVideo() {
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const [isPlaying, setIsPlaying] = React.useState(false);
+
+  React.useEffect(() => {
+    // Try to play with audio, fallback to muted if blocked
+    if (videoRef.current) {
+      const playPromise = videoRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(() => {
+            // Autoplay with audio was blocked, try muted
+            if (videoRef.current) {
+              videoRef.current.muted = true;
+              videoRef.current.play()
+                .then(() => {
+                  setIsPlaying(true);
+                })
+                .catch(() => {
+                  setIsPlaying(false);
+                });
+            }
+          });
+      }
+    }
+  }, []);
+
+  const handleVideoClick = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        videoRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(() => {
+            setIsPlaying(false);
+          });
+      }
+    }
+  };
+
+  return (
+    <div className={styles.heroVideoContainer}>
+      <video
+        ref={videoRef}
+        className={styles.heroVideo}
+        src="/img/How_to_Build_an_AI_Robot (1).mp4"
+        loop
+        playsInline
+        onClick={handleVideoClick}
+        aria-label="Promotional video: How to Build an AI Robot. Click to play or pause."
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleVideoClick();
+          }
+        }}
+      />
     </div>
   );
 }
@@ -73,6 +144,7 @@ function HomepageHeader() {
           </div>
           <div className={styles.heroVisual}>
             <HeroAnimation />
+            <HeroVideo />
           </div>
         </div>
       </div>
