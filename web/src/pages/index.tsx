@@ -29,20 +29,30 @@ function HeroAnimation() {
 
 function HeroVideo() {
   const videoRef = React.useRef<HTMLVideoElement>(null);
-  const [isPlaying, setIsPlaying] = React.useState(true);
+  const [isPlaying, setIsPlaying] = React.useState(false);
 
   React.useEffect(() => {
     // Try to play with audio, fallback to muted if blocked
     if (videoRef.current) {
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // Autoplay with audio was blocked, try muted
-          if (videoRef.current) {
-            videoRef.current.muted = true;
-            videoRef.current.play();
-          }
-        });
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(() => {
+            // Autoplay with audio was blocked, try muted
+            if (videoRef.current) {
+              videoRef.current.muted = true;
+              videoRef.current.play()
+                .then(() => {
+                  setIsPlaying(true);
+                })
+                .catch(() => {
+                  setIsPlaying(false);
+                });
+            }
+          });
       }
     }
   }, []);
@@ -51,10 +61,16 @@ function HeroVideo() {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
+        setIsPlaying(false);
       } else {
-        videoRef.current.play();
+        videoRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(() => {
+            setIsPlaying(false);
+          });
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
@@ -67,6 +83,15 @@ function HeroVideo() {
         loop
         playsInline
         onClick={handleVideoClick}
+        aria-label="Promotional video: How to Build an AI Robot. Click to play or pause."
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleVideoClick();
+          }
+        }}
       />
     </div>
   );
