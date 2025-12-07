@@ -1,0 +1,26 @@
+type: object
+required:
+  - title
+  - sidebar_label
+  - description
+properties:
+  id:
+    type: string
+    description: Unique identifier for the document. Defaults to filename if omitted.
+  title:
+    type: string
+    description: H1 title of the page.
+  sidebar_label:
+    type: string
+    description: Short label for the navigation sidebar.
+  description:
+    type: string
+    description: Summary for SEO and social sharing.
+  keywords:
+    type: array
+    items:
+      type: string
+    description: SEO keywords.
+  image:
+    type: string
+    description: Path to social card image (optional).

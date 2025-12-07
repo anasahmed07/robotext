@@ -1,0 +1,74 @@
+---
+title: The AI-Robot Brain (NVIDIA Isaac)
+sidebar_label: NVIDIA Isaac
+description: Advanced perception and training using NVIDIA Isaac Sim and Isaac ROS.
+keywords: [NVIDIA Isaac, Isaac Sim, Isaac ROS, Perception, Reinforcement Learning]
+---
+
+# The AI-Robot Brain (NVIDIA Isaac)
+
+**NVIDIA Isaac** is a platform designed to accelerate the development and deployment of AI-powered robots. It bridges the gap between simulation and reality using photorealistic rendering and GPU-accelerated perception libraries.
+
+## Isaac Sim vs. Isaac ROS
+
+The platform consists of two main pillars:
+
+![Schematic showing Isaac Sim (Simulation/Training) on the left and Isaac ROS (Deployment/Inference) on the right. Style: NotebookLM dark mode schematic.](/img/docs/03/isaac-platform.png)
+
+1. **Isaac Sim**: Built on NVIDIA Omniverse. It is used for generating synthetic data and training Reinforcement Learning (RL) agents.
+2. **Isaac ROS**: A collection of hardware-accelerated packages for ROS 2. It runs on the robot (e.g., Jetson Orin) to process camera and lidar data efficiently.
+
+## Perception Pipeline
+
+A typical perception pipeline in Isaac ROS looks like this:
+
+![Diagram of a pipeline: Camera Input -> Rectify -> VSLAM -> Occupancy Grid -> Path Planning. Style: NotebookLM dark mode schematic.](/img/docs/03/perception-pipeline.png)
+
+- **Rectify**: Corrects lens distortion.
+- **VSLAM**: Visual Simultaneous Localization and Mapping. Determines where the robot is.
+- **Nvblox**: Builds a 3D map of the environment for collision avoidance.
+
+## Configuring Isaac ROS VSLAM
+
+Here is an example launch configuration for the `isaac_ros_visual_slam` node.
+
+```python title="isaac_vslam_launch.py"
+from launch import LaunchDescription
+from launch_ros.actions import ComposableNodeContainer
+from launch_ros.descriptions import ComposableNode
+
+def generate_launch_description():
+    vslam_node = ComposableNode(
+        package='isaac_ros_visual_slam',
+        plugin='nvidia::isaac_ros::visual_slam::VisualSlamNode',
+        name='visual_slam_node',
+        parameters=[{
+            'enable_rectified_pose': True,
+            'denoise_input_images': False,
+            'rectified_images': True,
+            'enable_debug_mode': False,
+            'debug_dump_path': '/tmp/vslam_dump',
+        }],
+        remappings=[
+            ('stereo_camera/left/image_rect', '/camera/left/image_rect'),
+            ('stereo_camera/right/image_rect', '/camera/right/image_rect'),
+            ('stereo_camera/left/camera_info', '/camera/left/camera_info'),
+            ('stereo_camera/right/camera_info', '/camera/right/camera_info'),
+        ]
+    )
+
+    container = ComposableNodeContainer(
+        name='vslam_container',
+        namespace='',
+        package='rclcpp_components',
+        executable='component_container_mt',
+        composable_node_descriptions=[vslam_node],
+        output='screen'
+    )
+
+    return LaunchDescription([container])
+```
+
+:::info Hardware Acceleration
+Isaac ROS nodes are heavily optimized for NVIDIA GPUs. They often use **CUDA** and **TensorRT** under the hood, making them significantly faster than standard CPU-based ROS nodes.
+:::

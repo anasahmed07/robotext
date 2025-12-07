@@ -1,0 +1,80 @@
+---
+title: ROS 2 کے بنیادی اصول
+sidebar_label: ROS 2 کے بنیادی اصول
+description: روبوٹ آپریٹنگ سسٹم (ROS 2) جدید روبوٹکس کا اعصابی نظام ہے۔
+keywords: [ROS 2, Nodes, Topics, Services, Publisher, Subscriber]
+---
+
+# ROS 2 کے بنیادی اصول
+
+**ROS 2** (روبوٹ آپریٹنگ سسٹم) دراصل ونڈوز یا لینکس کی طرح کا آپریٹنگ سسٹم نہیں ہے۔ یہ ایک **مڈل ویئر** (Middleware) ہے—سافٹ ویئر لائبریریوں اور ٹولز کا ایک مجموعہ جو آپ کو روبوٹ ایپلی کیشنز بنانے میں مدد کرتا ہے۔ اسے "اعصابی نظام" کے طور پر سوچیں جو دماغ (الگورتھم) کو جسم (موٹرز اور سینسرز) سے جوڑتا ہے۔
+
+## ROS 2 گراف
+
+ROS 2 سسٹم مواصلاتی پروگراموں کا ایک نیٹ ورک ہے جسے **Nodes** کہتے ہیں۔
+
+![Schematic of the ROS 2 Graph showing Nodes as circles and Topics as pipes connecting them. Style: NotebookLM dark mode schematic.](/img/docs/01/ros2-graph.png)
+
+- **Node**: ایک واحد عمل جو حساب کتاب کرتا ہے (مثال کے طور پر، "کیمرہ پڑھیں"، "چہرہ تلاش کریں")۔
+- **Topic**: ڈیٹا سٹریمنگ کے لیے ایک چینل (جیسے، `/camera/image_raw`)۔
+- **Message**: وہ ڈیٹا اسٹرکچر جو ٹاپک پر بھیجا جاتا ہے۔
+
+## پبلشر / سبسکرائبر ماڈل
+
+نوڈز کے مواصلات کا بنیادی طریقہ **Publish/Subscribe** ہے۔
+
+1. **Publisher**: ٹاپک پر ڈیٹا بھیجتا ہے۔
+2. **Subscriber**: ٹاپک کو سنتا ہے۔
+
+### Python مثال: کم سے کم پبلشر
+
+```python title="minimal_publisher.py"
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class MinimalPublisher(Node):
+    def __init__(self):
+        super().__init__('minimal_publisher')
+        self.publisher_ = self.create_publisher(String, 'topic', 10)
+        timer_period = 0.5  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.i = 0
+
+    def timer_callback(self):
+        msg = String()
+        msg.data = 'Hello World: %d' % self.i
+        self.publisher_.publish(msg)
+        self.get_logger().info('Publishing: "%s"' % msg.data)
+        self.i += 1
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = MinimalPublisher()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## لانچ فائلیں
+
+ایک حقیقی روبوٹ میں، ہم 50 نوڈز کو دستی طور پر شروع نہیں کرتے ہیں۔ ہم **Launch Files** استعمال کرتے ہیں۔
+
+```xml title="robot_launch.xml"
+<launch>
+    <!-- Start the Camera Driver Node -->
+    <node pkg="camera_pkg" exec="camera_driver" name="camera_node">
+        <param name="resolution" value="1080p"/>
+    </node>
+
+    <!-- Start the Brain Node -->
+    <node pkg="brain_pkg" exec="object_detector" name="detector_node"/>
+</launch>
+```
+
+:::warning ریئل ٹائم رکاوٹیں
+ROS 2 کو ریئل ٹائم سسٹمز کے لیے ڈیزائن کیا گیا ہے۔ یقینی بنائیں کہ آپ کا نیٹ ورک (DDS) کم تاخیر (low latency) کے لیے درست طریقے سے ترتیب دیا گیا ہے۔
+:::

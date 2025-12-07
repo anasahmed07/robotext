@@ -1,0 +1,50 @@
+---
+title: Humanoid Robot Development
+sidebar_label: Humanoid Development
+description: Kinematics, dynamics, and balance control for bipedal robots.
+keywords: [Humanoid, Bipedal, Kinematics, Dynamics, Balance Control]
+---
+
+# Humanoid Robot Development
+
+Building a humanoid robot is one of the grand challenges of robotics. Unlike wheeled robots, bipeds are inherently unstable. They must constantly fight gravity to stay upright.
+
+## Bipedal Locomotion
+
+Walking is essentially "controlled falling".
+
+![Schematic of a bipedal walking cycle (Support Phase, Swing Phase). Shows Center of Mass (CoM) relative to Zero Moment Point (ZMP). Style: NotebookLM dark mode schematic.](/img/docs/04/bipedal-locomotion.png)
+
+- **Zero Moment Point (ZMP)**: The point on the ground where the total tipping moment is zero. To stay balanced, the ZMP must be inside the support polygon (the feet).
+- **Inverse Kinematics (IK)**: Calculating joint angles to place the foot at a specific position.
+
+## Balance Control Loop
+
+A simple balance controller typically uses a PID loop to keep the torso upright based on IMU data.
+
+```python title="balance_controller.py"
+class BalanceController:
+    def __init__(self, target_pitch=0.0):
+        self.target_pitch = target_pitch
+        self.kp = 10.0  # Proportional gain
+        self.kd = 0.5   # Derivative gain
+        self.prev_error = 0.0
+
+    def compute_torque(self, current_pitch, current_velocity):
+        error = self.target_pitch - current_pitch
+        d_error = -current_velocity # changing error rate
+        
+        # PID Output (Torque)
+        torque = (self.kp * error) + (self.kd * d_error)
+        return torque
+
+# Simulation Loop
+controller = BalanceController()
+current_pitch = get_imu_pitch() # from sensor
+cmd_torque = controller.compute_torque(current_pitch, 0.1)
+send_motor_command(cmd_torque)
+```
+
+:::warning Safety First
+Humanoid robots are heavy and can fall unexpectedly. Always use a gantry or safety harness when testing balance algorithms on real hardware.
+:::

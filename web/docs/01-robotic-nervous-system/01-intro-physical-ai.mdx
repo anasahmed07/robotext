@@ -1,0 +1,75 @@
+---
+title: Introduction to Physical AI
+sidebar_label: Intro to Physical AI
+description: Understanding the bridge between digital intelligence and physical bodies.
+keywords: [Physical AI, Embodied Intelligence, ROS 2, Robotics, Sensors]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Introduction to Physical AI
+
+**Physical AI** refers to AI systems that function in reality and comprehend physical laws. Unlike digital AI (like ChatGPT) which operates in a world of text and tokens, Physical AI must deal with gravity, friction, and the unpredictability of the real world.
+
+## Physical AI vs. Digital AI
+
+The transition from Digital AI to Physical AI involves moving from "The Cloud" to "The Edge".
+
+![Schematic showing the brain (Digital AI) connecting to a robot body (Physical AI) with a nervous system (ROS 2) in between. Style: NotebookLM dark mode schematic.](/img/docs/01/physical-vs-digital-intelegence.png)
+
+| Feature | Digital AI | Physical AI |
+| :--- | :--- | :--- |
+| **Environment** | Static / Digital | Dynamic / Physical |
+| **Input** | Text / Images | Sensor Data (LIDAR, IMU) |
+| **Output** | Text / Pixels | Motor Torques / Action |
+| **Cost of Failure** | Incorrect Text | Physical Damage |
+
+## Sensor Systems
+
+To interact with the world, a robot needs senses. We call these **Sensors**.
+
+![Diagram of a robot head showing Lidar (Eyes/Distance), Camera (Eyes/Color), and IMU (Inner Ear/Balance). Style: NotebookLM dark mode schematic.](/img/docs/01/sensor.png)
+
+### Key Sensors
+- **LIDAR**: Light Detection and Ranging. Measures distance.
+- **IMU**: Inertial Measurement Unit. Measures acceleration and rotation (balance).
+- **Camera**: RGB and Depth. Provides visual context.
+
+## Reading Sensor Data (Python)
+
+Here is a simple example of how we might read data from a simulated sensor in Python.
+
+```python title="simple_sensor.py"
+import random
+import time
+
+class LidarSensor:
+    def __init__(self, range_max=10.0):
+        self.range_max = range_max
+
+    def read_distance(self):
+        # Simulate sensor noise
+        noise = random.uniform(-0.1, 0.1)
+        actual_distance = 5.0 # meters
+        return min(self.range_max, max(0.0, actual_distance + noise))
+
+def main():
+    lidar = LidarSensor()
+    
+    print("Starting Sensor Stream...")
+    try:
+        while True:
+            dist = lidar.read_distance()
+            print(f"Distance: {dist:.2f} meters")
+            time.sleep(1.0)
+    except KeyboardInterrupt:
+        print("Stopping.")
+
+if __name__ == "__main__":
+    main()
+```
+
+:::info Key Takeaway
+Physical AI requires **Embodied Intelligence**—the ability to plan and act while respecting the constraints of the physical body and environment.
+:::

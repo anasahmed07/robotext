@@ -1,0 +1,72 @@
+---
+title: Conversational Robotics (VLA)
+sidebar_label: Conversational Robotics
+description: Vision-Language-Action (VLA) models bridging LLMs and Robotics.
+keywords: [VLA, LLM, Vision-Language-Action, OpenAI Whisper, GPT-4o]
+---
+
+# Conversational Robotics (VLA)
+
+The final frontier of Physical AI is the integration of Large Language Models (LLMs) with robotic control. We call this **Vision-Language-Action (VLA)**. It allows us to talk to robots in plain English.
+
+## VLA Architecture
+
+A VLA system translates natural language into ROS 2 actions.
+
+![Schematic of VLA Architecture: Voice Input -> Whisper (Text) -> LLM (Planner) -> ROS 2 Action Server -> Robot. Style: NotebookLM dark mode schematic.](/img/docs/04/vla-architecture.png)
+
+1. **User**: "Pick up the red apple."
+2. **ASR (Whisper)**: Converts audio to text.
+3. **VLM (GPT-4o/Gemini)**: Analyzes the scene image, finds the apple, and plans the grasp.
+4. **Robot**: Executes the plan.
+
+## LLM-to-ROS 2 Bridge
+
+Here is a conceptual example of how an LLM can generate ROS 2 commands.
+
+```python title="llm_bridge.py"
+import openai
+import rclpy
+from std_msgs.msg import String
+
+def get_action_from_llm(user_prompt):
+    # System prompt defines the available robot actions
+    system_prompt = """
+    You are a robot controller. Output ONLY a JSON command.
+    Available actions:
+    - move_forward(meters)
+    - turn(degrees)
+    - say(text)
+    """
+    
+    response = openai.ChatCompletion.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ]
+    )
+    return response.choices[0].message.content
+
+def main():
+    rclpy.init()
+    node = rclpy.create_node('llm_bridge')
+    pub = node.create_publisher(String, 'robot_commands', 10)
+    
+    command = "Walk forward 2 meters and say hello"
+    json_action = get_action_from_llm(command)
+    
+    msg = String()
+    msg.data = json_action
+    pub.publish(msg)
+    
+    print(f"Sent command: {json_action}")
+    # Output: {"actions": [{"cmd": "move_forward", "arg": 2}, {"cmd": "say", "arg": "hello"}]}
+
+if __name__ == "__main__":
+    main()
+```
+
+:::info The Future
+We are moving from "programming" robots to "teaching" them. VLA models enable robots to learn from demonstration and natural language instruction.
+:::

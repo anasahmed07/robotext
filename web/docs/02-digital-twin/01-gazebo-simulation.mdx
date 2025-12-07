@@ -1,0 +1,68 @@
+---
+title: Robot Simulation with Gazebo
+sidebar_label: Gazebo Simulation
+description: Learn how to simulate physics, gravity, and sensors for robots using Gazebo.
+keywords: [Gazebo, Simulation, URDF, Physics Engine, Digital Twin]
+---
+
+# Robot Simulation with Gazebo
+
+**Gazebo** is a powerful physics engine and 3D environment for robot simulation. It allows you to test your algorithms in a realistic virtual world before deploying them to expensive and fragile hardware. This is the essence of the **Digital Twin**.
+
+## Gazebo Architecture
+
+Gazebo operates on a client-server model.
+
+![Schematic of Gazebo Architecture showing gzserver (physics) and gzclient (rendering) communicating. Style: NotebookLM dark mode schematic.](/img/docs/02/gazebo-architecture.png)
+
+- **gzserver**: Runs the physics loop and sensor generation. It can run "headless" (without a window).
+- **gzclient**: The graphical interface that renders the scene.
+
+## The URDF Format
+
+To simulate a robot, we must describe it. We use **URDF** (Unified Robot Description Format). It is an XML file that defines the robot's physical properties.
+
+![Diagram showing the URDF tree structure: Links (bones) connected by Joints (muscles). Style: NotebookLM dark mode schematic.](/img/docs/02/urdf-structure.png)
+
+### Key Components
+- **Link**: A rigid body (e.g., forearm, wheel). Has mass and inertia.
+- **Joint**: Connects two links (e.g., hinge, slider). Defines range of motion.
+
+### URDF Example: A Simple Joint
+
+Here is how you define a simple arm with two links connected by a hinge joint.
+
+```xml title="simple_arm.urdf"
+<robot name="simple_arm">
+  <!-- Base Link -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- Moving Link -->
+  <link name="forearm">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.5"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- The Joint connecting them -->
+  <joint name="elbow_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="forearm"/>
+    <origin xyz="0 0 0.6"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="1000.0" velocity="0.5"/>
+  </joint>
+</robot>
+```
+
+:::tip Physics Matters
+For a stable simulation, you MUST define `<inertial>` properties (mass, inertia matrix) for every link. If you don't, your robot might explode in the physics engine!
+:::

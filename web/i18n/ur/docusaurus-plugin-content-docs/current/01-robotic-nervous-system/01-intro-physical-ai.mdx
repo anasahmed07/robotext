@@ -1,0 +1,75 @@
+---
+title: فزیکل AI کا تعارف
+sidebar_label: فزیکل AI کا تعارف
+description: ڈیجیٹل ذہانت اور جسمانی اجسام کے درمیان پل کو سمجھنا۔
+keywords: [Physical AI, Embodied Intelligence, ROS 2, Robotics, Sensors]
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# فزیکل AI کا تعارف
+
+**فزیکل AI** (Physical AI) سے مراد وہ AI سسٹمز ہیں جو حقیقت میں کام کرتے ہیں اور طبعی قوانین (Physical Laws) کو سمجھتے ہیں۔ ڈیجیٹل AI (جیسے ChatGPT) کے برعکس جو متن اور ٹوکنز کی دنیا میں کام کرتا ہے، فزیکل AI کو کشش ثقل، رگڑ، اور حقیقی دنیا کی غیر متوقع صورتحال سے نمٹنا پڑتا ہے۔
+
+## فزیکل AI بمقابلہ ڈیجیٹل AI
+
+ڈیجیٹل AI سے فزیکل AI کی طرف منتقلی میں "The Cloud" سے "The Edge" کی طرف جانا شامل ہے۔
+
+![Schematic showing the brain (Digital AI) connecting to a robot body (Physical AI) with a nervous system (ROS 2) in between. Style: NotebookLM dark mode schematic.](/img/docs/01/physical-vs-digital-intelegence.png)
+
+| خصوصیت | ڈیجیٹل AI | فزیکل AI |
+| :--- | :--- | :--- |
+| **ماحول** | ساکن / ڈیجیٹل | متحرک / جسمانی |
+| **ان پٹ** | متن / تصاویر | سینسر ڈیٹا (LIDAR, IMU) |
+| **آؤٹ پٹ** | متن / پکسلز | موٹر ٹارک / عمل |
+| **ناکامی کی قیمت** | غلط متن | جسمانی نقصان |
+
+## سینسر سسٹمز
+
+دنیا کے ساتھ تعامل کرنے کے لیے، روبوٹ کو حواس کی ضرورت ہوتی ہے۔ ہم انہیں **سینسرز** (Sensors) کہتے ہیں۔
+
+![Diagram of a robot head showing Lidar (Eyes/Distance), Camera (Eyes/Color), and IMU (Inner Ear/Balance). Style: NotebookLM dark mode schematic.](/img/docs/01/sensor.png)
+
+### اہم سینسرز
+- **LIDAR**: روشنی کا پتہ لگانا اور رینجنگ۔ فاصلے کی پیمائش کرتا ہے۔
+- **IMU**: Inertial Measurement Unit۔ ایکسلریشن اور گردش (توازن) کی پیمائش کرتا ہے۔
+- **Camera**: RGB اور گہرائی۔ بصری سیاق و سباق فراہم کرتا ہے۔
+
+## سینسر ڈیٹا پڑھنا (Python)
+
+یہاں ایک سادہ مثال ہے کہ ہم Python میں مصنوعی سینسر سے ڈیٹا کیسے پڑھ سکتے ہیں۔
+
+```python title="simple_sensor.py"
+import random
+import time
+
+class LidarSensor:
+    def __init__(self, range_max=10.0):
+        self.range_max = range_max
+
+    def read_distance(self):
+        # Simulate sensor noise
+        noise = random.uniform(-0.1, 0.1)
+        actual_distance = 5.0 # meters
+        return min(self.range_max, max(0.0, actual_distance + noise))
+
+def main():
+    lidar = LidarSensor()
+    
+    print("Starting Sensor Stream...")
+    try:
+        while True:
+            dist = lidar.read_distance()
+            print(f"Distance: {dist:.2f} meters")
+            time.sleep(1.0)
+    except KeyboardInterrupt:
+        print("Stopping.")
+
+if __name__ == "__main__":
+    main()
+```
+
+:::info اہم نکتہ
+فزیکل AI کے لیے **مجسم ذہانت** (Embodied Intelligence) کی ضرورت ہوتی ہے—یعنی جسمانی جسم اور ماحول کی رکاوٹوں کا احترام کرتے ہوئے منصوبہ بندی اور عمل کرنے کی صلاحیت۔
+:::

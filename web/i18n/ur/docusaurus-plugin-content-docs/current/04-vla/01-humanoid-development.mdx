@@ -1,0 +1,50 @@
+---
+title: Humanoid Robot Development (Urdu)
+sidebar_label: Humanoid Development
+description: Kinematics, dynamics, and balance control for bipedal robots.
+keywords: [Humanoid, Bipedal, Kinematics, Dynamics, Balance Control]
+---
+
+# ہیومنائیڈ روبوٹ ڈویلپمنٹ
+
+ایک ہیومنائیڈ (انسان نما) روبوٹ بنانا روبوٹکس کے عظیم چیلنجوں میں سے ایک ہے۔ پہیوں والے روبوٹس کے برعکس، دو پیروں والے (bipeds) فطری طور پر غیر مستحکم ہوتے ہیں۔ انہیں سیدھا رہنے کے لیے کشش ثقل سے مسلسل لڑنا پڑتا ہے۔
+
+## دو پیروں والی حرکت (Bipedal Locomotion)
+
+چلنا بنیادی طور پر "کنٹرولڈ گرنا" (controlled falling) ہے۔
+
+![Schematic of a bipedal walking cycle (Support Phase, Swing Phase). Shows Center of Mass (CoM) relative to Zero Moment Point (ZMP). Style: NotebookLM dark mode schematic.](/img/docs/04/bipedal-locomotion.png)
+
+- **Zero Moment Point (ZMP)**: زمین پر وہ نقطہ جہاں کل ٹپنگ لمحہ (tipping moment) صفر ہوتا ہے۔ متوازن رہنے کے لیے، ZMP کو سپورٹ پولیگون (پاؤں) کے اندر ہونا چاہیے۔
+- **Inverse Kinematics (IK)**: پاؤں کو کسی خاص پوزیشن پر رکھنے کے لیے جوڑوں (joints) کے زاویوں کا حساب لگانا۔
+
+## بیلنس کنٹرول لوپ
+
+ایک سادہ بیلنس کنٹرولر عام طور پر IMU ڈیٹا کی بنیاد پر دھڑ (torso) کو سیدھا رکھنے کے لیے PID لوپ کا استعمال کرتا ہے۔
+
+```python title="balance_controller.py"
+class BalanceController:
+    def __init__(self, target_pitch=0.0):
+        self.target_pitch = target_pitch
+        self.kp = 10.0  # Proportional gain
+        self.kd = 0.5   # Derivative gain
+        self.prev_error = 0.0
+
+    def compute_torque(self, current_pitch, current_velocity):
+        error = self.target_pitch - current_pitch
+        d_error = -current_velocity # changing error rate
+        
+        # PID Output (Torque)
+        torque = (self.kp * error) + (self.kd * d_error)
+        return torque
+
+# Simulation Loop
+controller = BalanceController()
+current_pitch = get_imu_pitch() # from sensor
+cmd_torque = controller.compute_torque(current_pitch, 0.1)
+send_motor_command(cmd_torque)
+```
+
+:::warning حفاظت پہلے
+ہیومنائیڈ روبوٹ بھاری ہوتے ہیں اور غیر متوقع طور پر گر سکتے ہیں۔ اصلی ہارڈ ویئر پر بیلنس الگورتھم کی جانچ کرتے وقت ہمیشہ گینٹری یا حفاظتی ہارنس (safety harness) کا استعمال کریں۔
+:::

@@ -1,0 +1,80 @@
+---
+title: ROS 2 Fundamentals
+sidebar_label: ROS 2 Fundamentals
+description: The Robot Operating System (ROS 2) is the nervous system of modern robotics.
+keywords: [ROS 2, Nodes, Topics, Services, Publisher, Subscriber]
+---
+
+# ROS 2 Fundamentals
+
+**ROS 2** (Robot Operating System) is not actually an operating system like Windows or Linux. It is a **middleware**—a set of software libraries and tools that help you build robot applications. Think of it as the "nervous system" that connects the brain (algorithms) to the body (motors and sensors).
+
+## The ROS 2 Graph
+
+A ROS 2 system is a network of communicating programs called **Nodes**.
+
+![Schematic of the ROS 2 Graph showing Nodes as circles and Topics as pipes connecting them. Style: NotebookLM dark mode schematic.](/img/docs/01/ros2-graph.png)
+
+- **Node**: A single process that performs a computation (e.g., "Read Camera", "Detect Face").
+- **Topic**: A channel for streaming data (e.g., `/camera/image_raw`).
+- **Message**: The data structure sent over a topic.
+
+## Publisher / Subscriber Model
+
+The primary way nodes communicate is through **Publish/Subscribe**.
+
+1. **Publisher**: Sends data to a topic.
+2. **Subscriber**: Listens to a topic.
+
+### Python Example: Minimal Publisher
+
+```python title="minimal_publisher.py"
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class MinimalPublisher(Node):
+    def __init__(self):
+        super().__init__('minimal_publisher')
+        self.publisher_ = self.create_publisher(String, 'topic', 10)
+        timer_period = 0.5  # seconds
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.i = 0
+
+    def timer_callback(self):
+        msg = String()
+        msg.data = 'Hello World: %d' % self.i
+        self.publisher_.publish(msg)
+        self.get_logger().info('Publishing: "%s"' % msg.data)
+        self.i += 1
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = MinimalPublisher()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+## Launch Files
+
+In a real robot, we don't start 50 nodes manually. We use **Launch Files**.
+
+```xml title="robot_launch.xml"
+<launch>
+    <!-- Start the Camera Driver Node -->
+    <node pkg="camera_pkg" exec="camera_driver" name="camera_node">
+        <param name="resolution" value="1080p"/>
+    </node>
+
+    <!-- Start the Brain Node -->
+    <node pkg="brain_pkg" exec="object_detector" name="detector_node"/>
+</launch>
+```
+
+:::warning Real-Time Constraints
+ROS 2 is designed for real-time systems. Ensure your network (DDS) is configured correctly for low latency.
+:::

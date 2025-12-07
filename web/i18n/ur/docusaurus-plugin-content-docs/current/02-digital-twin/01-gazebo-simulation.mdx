@@ -1,0 +1,68 @@
+---
+title: Gazebo کے ساتھ روبوٹ سمولیشن
+sidebar_label: Gazebo سمولیشن
+description: جانیں کہ Gazebo کا استعمال کرتے ہوئے روبوٹس کے لیے فزکس، کشش ثقل اور سینسرز کو کیسے simulate کیا جائے۔
+keywords: [Gazebo, Simulation, URDF, Physics Engine, Digital Twin]
+---
+
+# Gazebo کے ساتھ روبوٹ سمولیشن
+
+**Gazebo** روبوٹ سمولیشن کے لیے ایک طاقتور فزکس انجن اور 3D ماحول ہے۔ یہ آپ کو اپنے الگورتھم کو مہنگے اور نازک ہارڈ ویئر پر تعینات کرنے سے پہلے ایک حقیقت پسندانہ ورچوئل دنیا میں ٹیسٹ کرنے کی اجازت دیتا ہے۔ یہ **ڈیجیٹل ٹوئن** (Digital Twin) کی اصل ہے۔
+
+## Gazebo کا فن تعمیر (Architecture)
+
+Gazebo کلائنٹ-سرور ماڈل پر کام کرتا ہے۔
+
+![Schematic of Gazebo Architecture showing gzserver (physics) and gzclient (rendering) communicating. Style: NotebookLM dark mode schematic.](/img/docs/02/gazebo-architecture.png)
+
+- **gzserver**: فزکس لوپ اور سینسر جنریشن چلاتا ہے۔ یہ "headless" (بغیر ونڈو کے) چل سکتا ہے۔
+- **gzclient**: گرافیکل انٹرفیس جو منظر کو پیش کرتا ہے۔
+
+## URDF فارمیٹ
+
+روبوٹ کو simulate کرنے کے لیے، ہمیں اس کی وضاحت کرنی ہوگی۔ ہم **URDF** (Unified Robot Description Format) استعمال کرتے ہیں۔ یہ ایک XML فائل ہے جو روبوٹ کی طبعی خصوصیات کی وضاحت کرتی ہے۔
+
+![Diagram showing the URDF tree structure: Links (bones) connected by Joints (muscles). Style: NotebookLM dark mode schematic.](/img/docs/02/urdf-structure.png)
+
+### اہم اجزاء
+- **Link**: ایک سخت جسم (جیسے، بازو، پہیہ)۔ اس میں ماس (mass) اور انرشیا (inertia) ہوتا ہے۔
+- **Joint**: دو لنکس کو جوڑتا ہے (جیسے، قبضہ، سلائیڈر)۔ حرکت کی حد (range of motion) کی وضاحت کرتا ہے۔
+
+### URDF مثال: ایک سادہ جوائنٹ
+
+یہاں آپ دیکھ سکتے ہیں کہ ایک سادہ بازو کی وضاحت کیسے کی جاتی ہے جس میں دو لنکس ایک قبضے والے جوائنٹ (hinge joint) سے جڑے ہوتے ہیں۔
+
+```xml title="simple_arm.urdf"
+<robot name="simple_arm">
+  <!-- Base Link -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder length="0.6" radius="0.2"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- Moving Link -->
+  <link name="forearm">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.5"/>
+      </geometry>
+    </visual>
+  </link>
+
+  <!-- The Joint connecting them -->
+  <joint name="elbow_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="forearm"/>
+    <origin xyz="0 0 0.6"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.57" upper="1.57" effort="1000.0" velocity="0.5"/>
+  </joint>
+</robot>
+```
+
+:::tip طبیعیات اہم ہے
+مستحکم سمولیشن کے لیے، آپ کو ہر لنک کے لیے `<inertial>` خصوصیات (ماس، انرشیا میٹرکس) کی وضاحت کرنی چاہیے۔ اگر آپ ایسا نہیں کرتے ہیں، تو آپ کا روبوٹ فزکس انجن میں تباہ (explode) ہو سکتا ہے!
+:::

@@ -1,0 +1,74 @@
+---
+title: AI-Robot دماغ (NVIDIA Isaac)
+sidebar_label: NVIDIA Isaac
+description: NVIDIA Isaac Sim اور Isaac ROS کا استعمال کرتے ہوئے جدید ادراک (Perception) اور تربیت۔
+keywords: [NVIDIA Isaac, Isaac Sim, Isaac ROS, Perception, Reinforcement Learning]
+---
+
+# AI-Robot دماغ (NVIDIA Isaac)
+
+**NVIDIA Isaac** ایک ایسا پلیٹ فارم ہے جو AI سے چلنے والے روبوٹس کی ترقی اور تعیناتی کو تیز کرنے کے لیے ڈیزائن کیا گیا ہے۔ یہ فوٹو ریئلسٹک رینڈرنگ اور GPU سے تیز رفتار ادراک (perception) لائبریریوں کا استعمال کرتے ہوئے سمولیشن اور حقیقت کے درمیان فرق کو ختم کرتا ہے۔
+
+## Isaac Sim بمقابلہ Isaac ROS
+
+یہ پلیٹ فارم دو اہم ستونوں پر مشتمل ہے:
+
+![Schematic showing Isaac Sim (Simulation/Training) on the left and Isaac ROS (Deployment/Inference) on the right. Style: NotebookLM dark mode schematic.](/img/docs/03/isaac-platform.png)
+
+1. **Isaac Sim**: NVIDIA Omniverse پر بنایا گیا ہے۔ یہ مصنوعی ڈیٹا (synthetic data) بنانے اور Reinforcement Learning (RL) ایجنٹس کی تربیت کے لیے استعمال ہوتا ہے۔
+2. **Isaac ROS**: ROS 2 کے لیے ہارڈ ویئر سے تیز رفتار پیکجز کا ایک مجموعہ۔ یہ روبوٹ (مثلاً Jetson Orin) پر کیمرے اور lidar ڈیٹا کو مؤثر طریقے سے پروسیس کرنے کے لیے چلتا ہے۔
+
+## ادراک پائپ لائن (Perception Pipeline)
+
+Isaac ROS میں ایک عام ادراک پائپ لائن کچھ اس طرح دکھتی ہے:
+
+![Diagram of a pipeline: Camera Input -> Rectify -> VSLAM -> Occupancy Grid -> Path Planning. Style: NotebookLM dark mode schematic.](/img/docs/03/perception-pipeline.png)
+
+- **Rectify**: لینس کی خرابی (distortion) کو درست کرتا ہے۔
+- **VSLAM**: بصری بیک وقت لوکلائزیشن اور میپنگ (Visual Simultaneous Localization and Mapping)۔ یہ طے کرتا ہے کہ روبوٹ کہاں ہے۔
+- **Nvblox**: ٹکراؤ سے بچنے کے لیے ماحول کا 3D نقشہ بناتا ہے۔
+
+## Isaac ROS VSLAM کی ترتیب (Configuration)
+
+یہاں `isaac_ros_visual_slam` نوڈ کے لیے لانچ کنفیگریشن کی ایک مثال ہے۔
+
+```python title="isaac_vslam_launch.py"
+from launch import LaunchDescription
+from launch_ros.actions import ComposableNodeContainer
+from launch_ros.descriptions import ComposableNode
+
+def generate_launch_description():
+    vslam_node = ComposableNode(
+        package='isaac_ros_visual_slam',
+        plugin='nvidia::isaac_ros::visual_slam::VisualSlamNode',
+        name='visual_slam_node',
+        parameters=[{
+            'enable_rectified_pose': True,
+            'denoise_input_images': False,
+            'rectified_images': True,
+            'enable_debug_mode': False,
+            'debug_dump_path': '/tmp/vslam_dump',
+        }],
+        remappings=[
+            ('stereo_camera/left/image_rect', '/camera/left/image_rect'),
+            ('stereo_camera/right/image_rect', '/camera/right/image_rect'),
+            ('stereo_camera/left/camera_info', '/camera/left/camera_info'),
+            ('stereo_camera/right/camera_info', '/camera/right/camera_info'),
+        ]
+    )
+
+    container = ComposableNodeContainer(
+        name='vslam_container',
+        namespace='',
+        package='rclcpp_components',
+        executable='component_container_mt',
+        composable_node_descriptions=[vslam_node],
+        output='screen'
+    )
+
+    return LaunchDescription([container])
+```
+
+:::info ہارڈ ویئر ایکسلریشن
+Isaac ROS نوڈز NVIDIA GPUs کے لیے بہت زیادہ آپٹمائزڈ ہیں۔ وہ اکثر **CUDA** اور **TensorRT** کا استعمال کرتے ہیں، جو انہیں معیاری CPU پر مبنی ROS نوڈز سے نمایاں طور پر تیز بناتا ہے۔
+:::
