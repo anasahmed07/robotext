@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat web/docs/01-robotic-nervous-system/01-intro-physical-ai.mdx web/docs/01-robotic-nervous-system/02-ros2-fundamentals.mdx web/docs/02-digital-twin/01-gazebo-simulation.mdx web/docs/03-ai-robot-brain/01-nvidia-isaac.mdx web/docs/04-vla/01-humanoid-development.mdx web/docs/04-vla/02-conversational-robotics.mdx)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

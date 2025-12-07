@@ -2,19 +2,26 @@
 sidebar_position: 3
 ---
 
-# Module 2: Digital Twin
+# Module 2: The Digital Twin
 
 ## Introduction
 
 Welcome to Module 2, where you'll discover the concept of Digital Twins and their crucial role in modern robotics and simulation.
 
-## What You'll Learn
+## Module Curriculum
 
-In this module, you will:
-- Understand what a Digital Twin is and why it matters
-- Learn how to create virtual replicas of physical robots
-- Explore simulation environments for testing and development
-- Apply Digital Twin concepts to real-world robotics scenarios
+We will focus on the two pillars of robotic simulation:
+
+1.  **Gazebo**: A high-fidelity physics simulator that calculates gravity, friction, collisions, and sensor data.
+2.  **URDF (Unified Robot Description Format)**: The XML language used to describe what your robot looks like and how it moves.
+
+### Topics Covered
+
+- **[Robot Simulation with Gazebo & URDF](./01-gazebo-simulation.mdx)**
+    - **Gazebo Architecture**: Physics engines (ODE, Bullet) and rendering.
+    - **URDF Modeling**: Links, Joints, Inertial tensors, and Visuals.
+    - **XACRO**: Making your robot models modular and reusable.
+    - **Simulation**: Spawning robots and bridging topics to ROS 2.
 
 ## Prerequisites
 
@@ -26,4 +33,4 @@ In this module, you will:
 
 Digital Twins bridge the gap between the physical and virtual worlds. Let's explore how!
 
-[Continue to the first lesson →](#)
+[**Start: Robot Simulation with Gazebo & URDF →**](./01-gazebo-simulation.mdx)

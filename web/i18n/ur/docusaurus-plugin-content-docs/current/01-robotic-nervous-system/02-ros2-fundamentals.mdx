@@ -1,0 +1,238 @@
+---
+title: ROS 2 کے بنیادی اصول
+sidebar_label: ROS 2 کے بنیادی اصول
+description: روبوٹ آپریٹنگ سسٹم (ROS 2) جدید روبوٹکس کا اعصابی نظام ہے۔ گراف آرکیٹیکچر، نوڈز، اور بنیادی تصورات میں مہارت حاصل کریں۔
+keywords: [ROS 2, نوڈز, ٹاپکس, سروسز, Publisher, Subscriber]
+---
+
+# ROS 2 کے بنیادی اصول
+
+## تعارف
+
+**ROS 2** (روبوٹ آپریٹنگ سسٹم 2) کی دنیا میں خوش آمدید—وہ مڈل ویئر جو دنیا بھر میں لاتعداد تحقیقی اور تجارتی روبوٹس کو طاقت دیتا ہے۔ ROS 2 کو اپنے روبوٹ کا "اعصابی نظام" سمجھیں: یہ سینسرز، الگورتھم، اور ایکچیوٹر (actuators) کو جوڑتا ہے، جس سے وہ بغیر کسی رکاوٹ کے حقیقی وقت میں بات چیت کر سکتے ہیں۔
+
+روایتی یک سنگی (monolithic) سافٹ ویئر کے برعکس جہاں ہر چیز ایک ہی پروگرام میں چلتی ہے، ROS 2 ایک **تقسیم شدہ، ماڈیولر فن تعمیر** کو اپناتا ہے۔ انفرادی اجزاء (جنہیں "نوڈز" کہا جاتا ہے) الگ الگ پروسیسز کے طور پر چلتے ہیں، جو اچھی طرح سے بیان کردہ انٹرفیس پر بات چیت کرتے ہیں۔
+
+## سیکھنے کے مقاصد
+
+اس سبق کے اختتام تک، آپ اس قابل ہو جائیں گے کہ:
+
+- **وضاحت کریں** ROS 2 گراف آرکیٹیکچر اور نوڈز کس طرح بات چیت کرتے ہیں۔
+- **فرق کریں** ROS 1 اور ROS 2 کے درمیان، یہ سمجھتے ہوئے کہ جدید روبوٹکس کے لیے ROS 2 کیوں ضروری ہے۔
+- **تخلیق کریں** ایک ROS 2 پیکج مناسب ساخت کے ساتھ۔
+- **لاگو کریں** Python میں ایک سادہ ROS 2 نوڈ۔
+- **سمجھیں** لانچ فائلز کی اہمیت۔
+
+## ROS 2 کیا ہے؟
+
+**ROS 2** ونڈوز یا لینکس کی طرح کا آپریٹنگ سسٹم نہیں ہے۔ یہ ایک **مڈل ویئر (middleware)** ہے—سافٹ ویئر لائبریریوں اور ٹولز کا ایک مجموعہ جو آپ کو روبوٹ ایپلی کیشنز بنانے میں مدد کرتا ہے۔
+
+### ROS 2 بمقابلہ روایتی روبوٹکس سافٹ ویئر
+
+ایک روبوٹ بنانے کا تصور کریں جہاں کیمرہ ڈرائیور، پاتھ پلانر، اور موٹر کنٹرولر سب ایک ہی بڑا پروگرام ہیں۔ کیمرے کے کوڈ میں ایک بگ پورے روبوٹ کو کریش کر سکتا ہے!
+
+**ROS 2** اسے اس طرح حل کرتا ہے:
+1.  **ماڈیولر آرکیٹیکچر**: ہر جزو ایک آزاد نوڈ ہے۔
+2.  **معیاری مواصلات**: نوڈز ٹاپکس، سروسز اور ایکشنز کے ذریعے بات کرتے ہیں۔
+3.  **زبان کی لچک**: نوڈز Python، C++، اور مزید میں لکھیں۔
+
+### ROS 2 بمقابلہ ROS 1
+
+ROS 1 (2007) تحقیق کے لیے بہترین تھا لیکن محدود تھا۔ ROS 2 لاتا ہے:
+- **ریئل ٹائم صلاحیتیں** (حفاظتی لحاظ سے اہم روبوٹس کے لیے یہ بہت ضروری ہے)۔
+- **کوئی ماسٹر نوڈ نہیں**: مکمل طور پر تقسیم شدہ نظام (ناکامی کا کوئی واحد نقطہ نہیں)۔
+- **سیکیورٹی**: DDS کے ذریعے انکرپشن اور تصدیق کے لیے بلٹ ان سپورٹ۔
+
+## ROS 2 گراف آرکیٹیکچر
+
+### نوڈز: بلڈنگ بلاکس
+
+ایک **نوڈ (Node)** ایک واحد مقصد کا عمل ہے جو ایک مخصوص کمپیوٹیشن انجام دیتا ہے (مثلاً، "کیمرہ پڑھیں"، "چہرے کا پتہ لگائیں")۔ نوڈز آزاد ہوتے ہیں؛ اگر ایک کریش ہو جائے تو دوسرے چلتے رہتے ہیں۔
+
+### دی کمپیوٹیشن (Computation) گراف
+
+رن ٹائم پر، ROS 2 ایک **کمپیوٹیشن گراف** بناتا ہے جہاں:
+- **نوڈز** ورٹیکس (vertices) ہیں۔
+- **ٹاپکس، سروسز، ایکشنز** کنارے (مواصلاتی چینلز) ہیں۔
+
+```mermaid
+graph TB
+    subgraph "ROS 2 Architecture"
+        App["ایپلیکیشن نوڈز (Application Nodes)"]
+        RCL["ROS کلائنٹ لائبریری (rclpy)"]
+        DDS["DDS مڈل ویئر"]
+        OS["آپریٹنگ سسٹم"]
+    end
+
+    App --> RCL
+    RCL --> DDS
+    DDS --> OS
+
+    style App fill:#a855f7,stroke:#9333ea,stroke-width:2px,color:#fff
+    style RCL fill:#ec4899,stroke:#db2777,stroke-width:2px,color:#fff
+    style DDS fill:#06b6d4,stroke:#0891b2,stroke-width:2px,color:#fff
+```
+
+### DDS: مواصلاتی پرت
+
+ROS 2 **DDS (Data Distribution Service)** کا استعمال کرتا ہے، جو کہ ایک انڈسٹری کا معیاری مڈل ویئر ہے۔ یہ **ڈسکوری** (نوڈز کا ایک دوسرے کو تلاش کرنا) کو سنبھالتا ہے اور حقیقی وقت کی کارکردگی کو یقینی بناتا ہے۔
+
+## اپنا پہلا ROS 2 پیکج بنانا
+
+ایک ROS 2 **پیکج** آپ کے ROS 2 کوڈ کے لیے ایک کنٹینر ہے۔
+
+### پیکج کا ڈھانچہ
+
+```
+my_robot_pkg/
+├── package.xml          # Dependencies and metadata
+├── setup.py             # Installation instructions
+└── my_robot_pkg/        # Source code
+    ├── __init__.py
+    └── my_first_node.py
+```
+
+### پیکج بنانا
+
+اپنے ورک اسپیس میں نیا پیکج بنانے کے لیے:
+
+```bash
+# Navigate to src folder
+cd ~/ros2_ws/src
+
+# Create package
+ros2 pkg create --build-type ament_python my_robot_pkg \
+  --dependencies rclpy std_msgs
+```
+
+## اپنا پہلا نوڈ لکھنا
+
+یہاں Python میں ایک سادہ **پبلشر نوڈ** کی مکمل مثال ہے۔
+
+```python title="minimal_publisher.py"
+#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from std_msgs.msg import String
+
+class MinimalPublisher(Node):
+    """A simple ROS 2 node that publishes messages"""
+
+    def __init__(self):
+        # Initialize the node with a name
+        super().__init__('minimal_publisher')
+
+        # Create a publisher on topic '/chatter'
+        self.publisher_ = self.create_publisher(String, '/chatter', 10)
+
+        # Create a timer (2 Hz)
+        timer_period = 0.5
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.i = 0
+
+    def timer_callback(self):
+        """Called by the timer every 0.5s"""
+        msg = String()
+        msg.data = 'Hello ROS 2: %d' % self.i
+        
+        # Publish the message
+        self.publisher_.publish(msg)
+        self.get_logger().info('Publishing: "%s"' % msg.data)
+        self.i += 1
+
+def main(args=None):
+    # Initialize ROS 2
+    rclpy.init(args=args)
+    
+    # Create and spin the node
+    node = MinimalPublisher()
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    
+    # Clean up
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### بلڈنگ اور رننگ (Building and Running)
+
+```bash
+# In workspace root
+colcon build --packages-select my_robot_pkg
+source install/setup.bash
+ros2 run my_robot_pkg minimal_publisher
+```
+
+## ROS 2 کمانڈ لائن ٹولز
+
+اپنے چلتے ہوئے سسٹم کا معائنہ کرنے کے لیے ان کمانڈز کا استعمال کریں:
+
+- **`ros2 node list`**: تمام فعال نوڈز دیکھیں۔
+- **`ros2 topic list`**: تمام ٹاپکس دیکھیں۔
+- **`ros2 topic echo /topic_name`**: ٹاپک پر پیغامات کو حقیقی وقت میں دیکھیں۔
+- **`rqt_graph`**: نیٹ ورک گراف کو گرافیکل طور پر دیکھیں۔
+
+## سروس کا معیار (QoS Policies)
+
+DDS مواصلات پر باریک کنٹرول کی اجازت دیتا ہے:
+
+- **Reliability (قابل اعتماد)**: `Reliable` (گارنٹی شدہ جیسے TCP) بمقابلہ `Best Effort` (تیز/نقصان دہ جیسے UDP)۔
+- **Durability (پائیداری)**: `Volatile` (کوئی تاریخ نہیں) بمقابلہ `Transient Local` (بعد میں شامل ہونے والوں کو ڈیٹا ملتا ہے)۔
+- **History (تاریخ)**: `Keep Last (N)` صرف N تازہ ترین پیغامات محفوظ کرتا ہے۔
+
+## نوڈ لائف سائیکل
+
+نوڈز کی حالتیں ہوتی ہیں: **Unconfigured** → **Inactive** → **Active** → **Finalized**۔ یہ سٹارٹ اپ کے متعین سلسلے کی اجازت دیتا ہے (مثلاً، ایکٹیویٹ ہونے سے پہلے ہارڈ ویئر کے تیار ہونے کا انتظار کرنا)۔
+
+## لانچ فائلز (Launch Files)
+
+حقیقی روبوٹ میں، ہم 50 نوڈز دستی طور پر شروع نہیں کرتے۔ ہم **لانچ فائلز** استعمال کرتے ہیں۔
+
+```xml title="robot_launch.xml"
+<launch>
+    <!-- Start the Camera Driver Node -->
+    <node pkg="camera_pkg" exec="camera_driver" name="camera_node">
+        <param name="resolution" value="1080p"/>
+    </node>
+
+    <!-- Start the Brain Node -->
+    <node pkg="brain_pkg" exec="object_detector" name="detector_node"/>
+</launch>
+```
+
+:::warning ریئل ٹائم رکاوٹیں
+ROS 2 کو ریئل ٹائم سسٹمز کے لیے ڈیزائن کیا گیا ہے۔ یقینی بنائیں کہ آپ کا نیٹ ورک (DDS) حفاظتی لحاظ سے اہم کاموں کے لیے کم تاخیر (low latency) کے لیے درست طریقے سے ترتیب دیا گیا ہے۔
+:::
+
+## خود تشخیصی سوالات (Self-Assessment)
+
+1. **ROS 2 کے تقسیم شدہ فن تعمیر کا بنیادی فائدہ کیا ہے؟**
+   <details>
+   <summary>جواب</summary>
+   ماڈیولرٹی اور فالٹ آئسولیشن۔ اگر ایک نوڈ کریش ہو جائے تو دوسرے بچ جاتے ہیں۔ یہ متوازی ترقی اور کوڈ کے دوبارہ استعمال کو بھی ممکن بناتا ہے۔
+   </details>
+
+2. **Reliable اور Best Effort QoS میں فرق کریں۔**
+   <details>
+   <summary>جواب</summary>
+   **Reliable** ترسیل کی ضمانت دیتا ہے (اگر ضرورت ہو تو دوبارہ ٹرانسمٹ کرتا ہے)، کمانڈز/پیرامیٹرز کے لیے اچھا ہے۔ **Best Effort** رفتار کو ترجیح دیتا ہے، ہائی فریکوئنسی سینسر ڈیٹا کے لیے اچھا ہے جہاں ایک فریم چھوڑنا ٹھیک ہے۔
+   </details>
+
+3. **`colcon build` کیا کرتا ہے؟**
+   <details>
+   <summary>جواب</summary>
+   یہ آپ کے ROS 2 پیکجز کو کمپائل اور بلڈ کرتا ہے، انحصار (dependencies) کا انتظام کرتا ہے اور `install` ڈائریکٹری بناتا ہے۔
+   </details>
+
+## خلاصہ
+
+اس سبق میں، آپ نے سیکھا کہ:
+- **ROS 2** ایک مڈل ویئر ہے جو آزاد **نوڈز** کو جوڑتا ہے۔
+- **نوڈز** **ٹاپکس**، **سروسز**، اور **ایکشنز** کے ذریعے بات چیت کرتے ہیں۔
+- آپ کوڈ کو منظم کرنے اور انحصار کا انتظام کرنے کے لیے **پیکجز** بناتے ہیں۔
+- **DDS** قابل ترتیب **QoS** کے ساتھ بنیادی مواصلات کو سنبھالتا ہے۔
