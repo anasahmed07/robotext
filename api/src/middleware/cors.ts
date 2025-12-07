@@ -5,6 +5,7 @@ const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
   'http://localhost:3000',
   'http://localhost:3001',
+  'https://anasahmed07.github.io', // GitHub Pages
 ];
 
 const corsOptions: CorsOptions = {
@@ -15,12 +16,14 @@ const corsOptions: CorsOptions = {
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      // Reject but don't throw error (serverless-friendly)
+      callback(null, false);
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
+  exposedHeaders: ['Set-Cookie'],
 };
 
 export const corsMiddleware = cors(corsOptions);

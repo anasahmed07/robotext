@@ -54,6 +54,11 @@ const config: Config = {
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/robotext/',
 
+  // Custom fields for runtime configuration
+  customFields: {
+    API_URL: process.env.BACKEND_API_URL || 'http://localhost:4000',
+  },
+
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'anasahmed07', // Usually your GitHub org/user name.

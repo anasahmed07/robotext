@@ -10,6 +10,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+app.use(express.json()); // Parse JSON request bodies
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use(corsMiddleware);
 app.use(requestLogger);
 

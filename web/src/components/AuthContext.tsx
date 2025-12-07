@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
 interface User {
   id: string;
@@ -50,10 +51,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const API_URL = typeof window !== 'undefined' 
-    ? (window as any).REACT_APP_API_URL || 'http://localhost:4000'
-    : 'http://localhost:4000';
+  
+  const { siteConfig } = useDocusaurusContext();
+  const API_URL = (siteConfig.customFields?.API_URL as string) || 'http://localhost:4000';
 
   const checkSession = async () => {
     try {

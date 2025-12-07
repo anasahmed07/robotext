@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Layout from '@theme/Layout';
 import { useHistory, useLocation } from '@docusaurus/router';
 import { useAuth } from '../components/AuthContext';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import axios from 'axios';
 import styles from './onboarding.module.css';
 
@@ -40,6 +41,9 @@ export default function Onboarding(): JSX.Element {
   const location = useLocation();
   const locale = location.pathname.startsWith('/ur/') ? '/ur' : '';
   const { user, profile, loading, checkSession } = useAuth();
+  const { siteConfig } = useDocusaurusContext();
+  const API_URL = (siteConfig.customFields?.API_URL as string) || 'http://localhost:4000';
+  
   const [formData, setFormData] = useState<OnboardingFormData>({
     programmingLanguages: [],
     rosFamiliarity: 'Beginner',
@@ -142,10 +146,8 @@ export default function Onboarding(): JSX.Element {
 
     setIsLoading(true);
     setErrors({});
-
-  const API_URL = typeof window !== 'undefined' 
-    ? (window as any).REACT_APP_API_URL || 'http://localhost:4000'
-    : 'http://localhost:4000';    try {
+    
+    try {
       const response = await axios.post(
         `${API_URL}/api/user/onboarding`,
         formData,

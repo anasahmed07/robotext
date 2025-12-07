@@ -7,6 +7,10 @@ if (!process.env.AUTH_SECRET) {
   throw new Error('AUTH_SECRET environment variable is not set');
 }
 
+if (!process.env.BETTER_AUTH_URL) {
+  throw new Error('BETTER_AUTH_URL environment variable is not set');
+}
+
 // @ts-ignore
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
